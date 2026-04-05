@@ -1,0 +1,275 @@
+@import "tailwindcss";
+
+/* ============================================================
+   AKSCHOLAR — Palette de couleurs et variables globales
+   ============================================================ */
+
+:root {
+  /* Couleurs primaires */
+  --ak-bleu:       #1E3A8A; /* Bleu profond (confiance, académique) */
+  --ak-bleu-clair: #3B82F6; /* Bleu vif (CTAs, liens) */
+  --ak-or:         #F59E0B; /* Or/Ambre (badges premium, accents) */
+  --ak-or-clair:   #FCD34D; /* Or clair (hover sur badges) */
+  --ak-emeraude:   #10B981; /* Vert (validé, succès) */
+  --ak-rouge:      #EF4444; /* Urgence, date limite proche */
+
+  /* Neutres */
+  --ak-gris-leger: #F8FAFC;
+  --ak-gris:       #64748B;
+  --ak-gris-fonce: #1E293B;
+  --ak-blanc:      #FFFFFF;
+
+  /* Gradients de marque */
+  --ak-gradient-hero:    linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #1D4ED8 100%);
+  --ak-gradient-premium: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  --ak-gradient-carte:   linear-gradient(180deg, rgba(30,58,138,0.03) 0%, rgba(30,58,138,0.08) 100%);
+
+  /* Ombres */
+  --ak-ombre-carte:  0 4px 6px -1px rgba(30,58,138,0.08), 0 2px 4px -2px rgba(30,58,138,0.05);
+  --ak-ombre-hover:  0 10px 25px -5px rgba(30,58,138,0.15), 0 4px 10px -5px rgba(30,58,138,0.08);
+  --ak-ombre-nav:    0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.06);
+
+  /* Compatibilité Tailwind */
+  --background: var(--ak-gris-leger);
+  --foreground: var(--ak-gris-fonce);
+}
+
+@theme inline {
+  --color-background:  var(--background);
+  --color-foreground:  var(--foreground);
+  --color-ak-bleu:     var(--ak-bleu);
+  --color-ak-or:       var(--ak-or);
+  --color-ak-emeraude: var(--ak-emeraude);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   COMPOSANTS PERSONNALISÉS
+   ============================================================ */
+
+/* Bouton primaire AKSCHOLAR */
+.ak-btn-primaire {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--ak-bleu);
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.ak-btn-primaire:hover {
+  background: var(--ak-bleu-clair);
+  transform: translateY(-1px);
+  box-shadow: var(--ak-ombre-hover);
+}
+
+/* Bouton premium (or) */
+.ak-btn-premium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--ak-gradient-premium);
+  color: #1a1a1a;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.ak-btn-premium:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(245,158,11,0.4);
+}
+
+/* Badge "Guide Disponible" */
+.ak-badge-guide {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  background: linear-gradient(135deg, #F59E0B, #FBBF24);
+  color: #1a1a1a;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Badge "Vérifié" */
+.ak-badge-verifie {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(16,185,129,0.12);
+  color: #059669;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* Badge pays */
+.ak-badge-pays {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  background: rgba(30,58,138,0.08);
+  color: var(--ak-bleu);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Carte bourse */
+.ak-carte {
+  background: white;
+  border: 1px solid rgba(30,58,138,0.08);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--ak-ombre-carte);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.ak-carte::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--ak-gradient-hero);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.ak-carte:hover {
+  box-shadow: var(--ak-ombre-hover);
+  transform: translateY(-3px);
+  border-color: rgba(30,58,138,0.15);
+}
+.ak-carte:hover::before {
+  opacity: 1;
+}
+
+/* Carte pays (navigation) */
+.ak-carte-pays {
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  box-shadow: var(--ak-ombre-carte);
+}
+.ak-carte-pays:hover,
+.ak-carte-pays.actif {
+  border-color: var(--ak-bleu);
+  background: rgba(30,58,138,0.04);
+  box-shadow: 0 0 0 3px rgba(30,58,138,0.1);
+}
+
+/* Section Hero */
+.ak-hero {
+  background: var(--ak-gradient-hero);
+  position: relative;
+  overflow: hidden;
+}
+.ak-hero::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.ak-hero::after {
+  content: "";
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+/* Input de recherche */
+.ak-recherche {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  padding-left: 3rem;
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  font-size: 1rem;
+  background: white;
+  color: var(--ak-gris-fonce);
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.ak-recherche:focus {
+  border-color: var(--ak-bleu-clair);
+  box-shadow: 0 4px 20px rgba(59,130,246,0.15);
+}
+.ak-recherche::placeholder {
+  color: var(--ak-gris);
+}
+
+/* Skeleton loading */
+.ak-skeleton {
+  background: linear-gradient(90deg, #f0f4ff 25%, #e8efff 50%, #f0f4ff 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Scroll horizontal sans scrollbar visible */
+.ak-scroll-horizontal {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.ak-scroll-horizontal::-webkit-scrollbar {
+  display: none;
+}
