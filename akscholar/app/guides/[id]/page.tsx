@@ -7,6 +7,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { BOURSES_RECENTES } from "@/lib/data/mockData";
 import { notFound } from "next/navigation";
+import BoutonCheckout from "@/components/BoutonCheckout";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -151,9 +152,15 @@ export default async function PageDetailGuide({ params }: Props) {
                     <p className="text-sm" style={{ color: "var(--ak-gris)" }}>Accès à vie · PDF inclus</p>
                   </div>
 
-                  <button className="ak-btn-premium w-full justify-center text-base mb-3">
-                    ⭐ Acheter maintenant
-                  </button>
+                  <BoutonCheckout
+                    type="guide"
+                    id={bourse.guideId!}
+                    nom={`Guide complet : ${bourse.titre}`}
+                    prix={9.99}
+                    className="ak-btn-premium w-full justify-center text-base mb-3"
+                  >
+                    ⭐ Acheter maintenant — 9,99€
+                  </BoutonCheckout>
 
                   <p className="text-center text-xs mb-4" style={{ color: "var(--ak-gris)" }}>
                     🛡️ Satisfait ou remboursé 30 jours

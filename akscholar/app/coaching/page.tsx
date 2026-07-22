@@ -1,10 +1,10 @@
 // ============================================================
 // AKSCHOLAR — Page Coaching VIP
-// Server Component
 // ============================================================
 
 import Link from "next/link";
 import type { Metadata } from "next";
+import BoutonCheckout from "@/components/BoutonCheckout";
 
 export const metadata: Metadata = {
   title: "Coaching VIP — Accompagnement personnalisé",
@@ -136,7 +136,11 @@ export default function PageCoaching() {
                     ))}
                   </ul>
 
-                  <button
+                  <BoutonCheckout
+                    type="coaching"
+                    id={formule.id}
+                    nom={`Coaching VIP — ${formule.nom}`}
+                    prix={formule.prix}
                     className={estPopulaire ? "ak-btn-primaire w-full justify-center" : "w-full py-2.5 rounded-lg text-sm font-semibold transition-all"}
                     style={!estPopulaire ? {
                       background: "rgba(30,58,138,0.06)",
@@ -145,7 +149,7 @@ export default function PageCoaching() {
                     } : {}}
                   >
                     Réserver maintenant
-                  </button>
+                  </BoutonCheckout>
                 </div>
               );
             })}

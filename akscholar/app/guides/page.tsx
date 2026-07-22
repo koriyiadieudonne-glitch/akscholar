@@ -6,6 +6,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { BOURSES_RECENTES } from "@/lib/data/mockData";
+import BoutonCheckout from "@/components/BoutonCheckout";
 
 export const metadata: Metadata = {
   title: "Guides Premium — Maximisez vos chances",
@@ -121,9 +122,15 @@ export default function PageGuides() {
                   <span className="text-2xl font-extrabold" style={{ color: "var(--ak-bleu)" }}>
                     {guide.prix.toFixed(2)}€
                   </span>
-                  <Link href={`/guides/${guide.id}`} className="ak-btn-premium text-sm">
+                  <BoutonCheckout
+                    type="guide"
+                    id={guide.id}
+                    nom={`Guide complet : ${guide.bourseNom}`}
+                    prix={guide.prix}
+                    className="ak-btn-premium text-sm"
+                  >
                     Acheter le guide
-                  </Link>
+                  </BoutonCheckout>
                 </div>
               </article>
             ))}
