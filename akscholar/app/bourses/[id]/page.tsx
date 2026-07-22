@@ -5,8 +5,48 @@
 
 import Link from "next/link";
 import type { Metadata } from "next";
-import { BOURSES_RECENTES } from "@/lib/data/mockData";
+import { supabase } from "@/lib/supabase";
 import { notFound } from "next/navigation";
+import type { Bourse } from "@/lib/types";
+
+// Mappe les colonnes Supabase vers l'interface Bourse
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapBourse(row: any): Bourse {
+  return {
+    id: row.id,
+    titre: row.titre,
+    description: row.description ?? "",
+    paysId: (row.pays ?? "").toLowerCase().replace(/\s+/g, "-"),
+    paysNom: row.pays ?? "",
+    universite: row.universite ?? "",
+    niveauEtude: Array.isArray(row.niveau) ? row.niveau : row.niveau ? [row.niveau] : [],
+    typeBourse: row.type_bourse ?? "Bourse complète",
+    montant: row.montant ?? "",
+    dateLimite: row.deadline ?? row.date_limite ?? "",
+    lienOfficiel: row.lien_officiel ?? "#",
+    domaines: row.domaines ?? [],
+    langueInstruction: row.langue_instruction ?? [],
+    imageUrl: row.image_url ?? undefined,
+    estVerifiee: row.est_verifiee ?? false,
+    aGuideDisponible: row.a_guide_disponible ?? false,
+    guideId: row.guide_id ?? undefined,
+    vues: row.vues ?? 0,
+    favoris: row.favoris ?? 0,
+    creeLe: row.created_at ?? "",
+    misAJourLe: row.updated_at ?? row.created_at ?? "",
+    sourceUrl: row.source_url ?? undefined,
+  };
+}
+
+async function getBourse(id: string): Promise<Bourse | null> {
+  const { data, error } = await supabase
+    .from("bourses")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error || !data) return null;
+  return mapBourse(data);
+}
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -14,7 +54,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const bourse = BOURSES_RECENTES.find((b) => b.id === id);
+  const bourse = await getBourse(id);
   if (!bourse) return { title: "Bourse introuvable" };
   return {
     title: bourse.titre,
@@ -24,7 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PageDetailBourse({ params }: Props) {
   const { id } = await params;
-  const bourse = BOURSES_RECENTES.find((b) => b.id === id);
+  const bourse = await getBourse(id);
 
   if (!bourse) notFound();
 

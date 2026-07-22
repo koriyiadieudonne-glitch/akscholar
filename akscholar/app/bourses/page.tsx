@@ -5,24 +5,72 @@
 // Filtrage par pays, niveau, type, domaine + recherche
 // ============================================================
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ScholarshipCard from "@/components/bourses/ScholarshipCard";
 import CountryFilter from "@/components/pays/CountryFilter";
-import {
-  BOURSES_RECENTES,
-  PAYS_POPULAIRES,
-} from "@/lib/data/mockData";
-import type { NiveauEtude, TypeBourse } from "@/lib/types";
+import { PAYS_POPULAIRES } from "@/lib/data/mockData";
+import { supabase } from "@/lib/supabase";
+import type { Bourse, NiveauEtude, TypeBourse } from "@/lib/types";
 
 const NIVEAUX: NiveauEtude[] = ["Licence", "Master", "Doctorat", "Post-doctorat", "Tous niveaux"];
 const TYPES: TypeBourse[] = ["Bourse complète", "Bourse partielle", "Stage", "Programme d'échange", "Résidence de recherche"];
 
+// Mappe les colonnes Supabase vers l'interface Bourse
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapBourse(row: any): Bourse {
+  return {
+    id: row.id,
+    titre: row.titre,
+    description: row.description ?? "",
+    paysId: (row.pays ?? "").toLowerCase().replace(/\s+/g, "-"),
+    paysNom: row.pays ?? "",
+    universite: row.universite ?? "",
+    niveauEtude: Array.isArray(row.niveau) ? row.niveau : row.niveau ? [row.niveau] : [],
+    typeBourse: row.type_bourse ?? "Bourse complète",
+    montant: row.montant ?? "",
+    dateLimite: row.deadline ?? row.date_limite ?? "",
+    lienOfficiel: row.lien_officiel ?? "#",
+    domaines: row.domaines ?? [],
+    langueInstruction: row.langue_instruction ?? [],
+    imageUrl: row.image_url ?? undefined,
+    estVerifiee: row.est_verifiee ?? false,
+    aGuideDisponible: row.a_guide_disponible ?? false,
+    guideId: row.guide_id ?? undefined,
+    vues: row.vues ?? 0,
+    favoris: row.favoris ?? 0,
+    creeLe: row.created_at ?? "",
+    misAJourLe: row.updated_at ?? row.created_at ?? "",
+    sourceUrl: row.source_url ?? undefined,
+  };
+}
+
 export default function PageBourses() {
+  const [bourses, setBourses] = useState<Bourse[]>([]);
+  const [chargement, setChargement] = useState(true);
+  const [erreur, setErreur] = useState<string | null>(null);
   const [recherche, setRecherche] = useState("");
   const [paysActifId, setPaysActifId] = useState<string | null>(null);
   const [niveauxActifs, setNiveauxActifs] = useState<NiveauEtude[]>([]);
   const [typeActif, setTypeActif] = useState<TypeBourse | null>(null);
   const [guideSeul, setGuideSeul] = useState(false);
+
+  useEffect(() => {
+    async function chargerBourses() {
+      setChargement(true);
+      setErreur(null);
+      const { data, error } = await supabase
+        .from("bourses")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) {
+        setErreur(error.message);
+      } else {
+        setBourses((data ?? []).map(mapBourse));
+      }
+      setChargement(false);
+    }
+    chargerBourses();
+  }, []);
 
   function toggleNiveau(n: NiveauEtude) {
     setNiveauxActifs((prev) =>
@@ -31,7 +79,7 @@ export default function PageBourses() {
   }
 
   const boursesFiltrees = useMemo(() => {
-    return BOURSES_RECENTES.filter((b) => {
+    return bourses.filter((b) => {
       const matchPays = !paysActifId || b.paysId === paysActifId;
       const matchType = !typeActif || b.typeBourse === typeActif;
       const matchNiveau =
@@ -234,7 +282,25 @@ export default function PageBourses() {
                 </div>
               </div>
 
-              {boursesFiltrees.length > 0 ? (
+              {chargement ? (
+                <div className="flex items-center justify-center py-20">
+                  <div
+                    className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin"
+                    style={{ borderColor: "var(--ak-bleu)", borderTopColor: "transparent" }}
+                  />
+                </div>
+              ) : erreur ? (
+                <div
+                  className="flex flex-col items-center justify-center py-20 rounded-xl text-center"
+                  style={{ background: "white", border: "2px dashed rgba(239,68,68,0.2)" }}
+                >
+                  <span className="text-5xl mb-4">⚠️</span>
+                  <h3 className="text-lg font-semibold mb-2" style={{ color: "var(--ak-gris-fonce)" }}>
+                    Erreur de chargement
+                  </h3>
+                  <p className="text-sm max-w-sm" style={{ color: "var(--ak-gris)" }}>{erreur}</p>
+                </div>
+              ) : boursesFiltrees.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                   {boursesFiltrees.map((b) => (
                     <ScholarshipCard key={b.id} bourse={b} />
