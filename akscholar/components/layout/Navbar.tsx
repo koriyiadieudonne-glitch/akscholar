@@ -6,8 +6,9 @@
 // ============================================================
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 
 // Liens de navigation principaux
 const LIENS_NAV = [
@@ -20,7 +21,14 @@ const LIENS_NAV = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOuvert, setMenuOuvert] = useState(false);
+  const { user, chargement, signOut } = useAuth();
+
+  async function handleSignOut() {
+    await signOut();
+    router.push("/");
+  }
 
   return (
     <header
@@ -74,19 +82,33 @@ export default function Navbar() {
 
           {/* Actions — Desktop */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/connexion"
-              className="text-sm font-medium transition-colors"
-              style={{ color: "var(--ak-gris)" }}
-            >
-              Connexion
-            </Link>
-            <Link
-              href="/inscription"
-              className="ak-btn-primaire text-sm"
-            >
-              Commencer Gratuitement
-            </Link>
+            {chargement ? null : user ? (
+              <>
+                <span className="text-sm max-w-[160px] truncate" style={{ color: "var(--ak-gris)" }}>
+                  {user.email}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className="text-sm font-medium px-3 py-1.5 rounded-lg transition-colors"
+                  style={{ background: "rgba(239,68,68,0.08)", color: "var(--ak-rouge)" }}
+                >
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/connexion"
+                  className="text-sm font-medium transition-colors"
+                  style={{ color: "var(--ak-gris)" }}
+                >
+                  Connexion
+                </Link>
+                <Link href="/inscription" className="ak-btn-primaire text-sm">
+                  Commencer Gratuitement
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Bouton menu — Mobile */}
@@ -138,12 +160,27 @@ export default function Navbar() {
               })}
             </ul>
             <div className="flex flex-col gap-2 mt-4 px-3">
-              <Link href="/connexion" className="ak-btn-primaire justify-center" style={{ background: "transparent", color: "var(--ak-bleu)", border: "1.5px solid var(--ak-bleu)" }}>
-                Connexion
-              </Link>
-              <Link href="/inscription" className="ak-btn-primaire justify-center">
-                Commencer Gratuitement
-              </Link>
+              {user ? (
+                <>
+                  <p className="text-xs text-center truncate mb-1" style={{ color: "var(--ak-gris)" }}>{user.email}</p>
+                  <button
+                    onClick={handleSignOut}
+                    className="ak-btn-primaire justify-center"
+                    style={{ background: "rgba(239,68,68,0.08)", color: "var(--ak-rouge)", border: "1.5px solid rgba(239,68,68,0.2)" }}
+                  >
+                    Déconnexion
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/connexion" className="ak-btn-primaire justify-center" style={{ background: "transparent", color: "var(--ak-bleu)", border: "1.5px solid var(--ak-bleu)" }} onClick={() => setMenuOuvert(false)}>
+                    Connexion
+                  </Link>
+                  <Link href="/inscription" className="ak-btn-primaire justify-center" onClick={() => setMenuOuvert(false)}>
+                    Commencer Gratuitement
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         )}

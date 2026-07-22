@@ -7,12 +7,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function PageConnexion() {
   const [email, setEmail] = useState("");
   const [motDePasse, setMotDePasse] = useState("");
   const [erreur, setErreur] = useState<string | null>(null);
   const [chargement, setChargement] = useState(false);
+
+  const { signIn } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") ?? "/bourses";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,10 +29,13 @@ export default function PageConnexion() {
       return;
     }
     setChargement(true);
-    // TODO: intégrer Firebase Auth signInWithEmailAndPassword
-    await new Promise((r) => setTimeout(r, 800));
+    const { erreur: err } = await signIn(email, motDePasse);
     setChargement(false);
-    setErreur("La connexion Firebase n'est pas encore configurée.");
+    if (err) {
+      setErreur(err);
+    } else {
+      router.push(redirect);
+    }
   }
 
   return (

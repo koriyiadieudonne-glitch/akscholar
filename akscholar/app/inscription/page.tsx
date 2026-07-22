@@ -7,6 +7,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
 
 export default function PageInscription() {
   const [prenom, setPrenom] = useState("");
@@ -15,6 +16,9 @@ export default function PageInscription() {
   const [motDePasse, setMotDePasse] = useState("");
   const [erreur, setErreur] = useState<string | null>(null);
   const [chargement, setChargement] = useState(false);
+  const [succes, setSucces] = useState(false);
+
+  const { signUp } = useAuth();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,15 +27,38 @@ export default function PageInscription() {
       setErreur("Veuillez remplir tous les champs.");
       return;
     }
-    if (motDePasse.length < 8) {
-      setErreur("Le mot de passe doit contenir au moins 8 caractères.");
+    if (motDePasse.length < 6) {
+      setErreur("Le mot de passe doit contenir au moins 6 caractères.");
       return;
     }
     setChargement(true);
-    // TODO: intégrer Firebase Auth createUserWithEmailAndPassword
-    await new Promise((r) => setTimeout(r, 800));
+    const { erreur: err } = await signUp(email, motDePasse, prenom, nom);
     setChargement(false);
-    setErreur("L'inscription Firebase n'est pas encore configurée.");
+    if (err) {
+      setErreur(err);
+    } else {
+      setSucces(true);
+    }
+  }
+
+  if (succes) {
+    return (
+      <div className="min-h-screen flex items-center justify-center py-12 px-4" style={{ background: "var(--ak-gris-leger)" }}>
+        <div className="w-full max-w-md ak-carte text-center">
+          <div className="text-5xl mb-4">✉️</div>
+          <h2 className="text-xl font-bold mb-2" style={{ color: "var(--ak-gris-fonce)" }}>
+            Vérifiez votre email
+          </h2>
+          <p className="text-sm mb-6" style={{ color: "var(--ak-gris)" }}>
+            Un lien de confirmation a été envoyé à <strong>{email}</strong>.
+            Cliquez dessus pour activer votre compte.
+          </p>
+          <Link href="/connexion" className="ak-btn-primaire justify-center">
+            Aller à la connexion
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
