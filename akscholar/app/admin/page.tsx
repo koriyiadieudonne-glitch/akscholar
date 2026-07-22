@@ -19,7 +19,7 @@ interface BourseAdmin {
   created_at: string;
 }
 
-const CHAMP_VIDE = { titre: "", pays: "", niveau: "", montant: "", deadline: "", description: "" };
+const CHAMP_VIDE = { titre: "", pays: "", niveau: "", montant: "", deadline: "", description: "", url_officiel: "", type_opportunite: "" };
 
 export default function PageAdmin() {
   const router = useRouter();
@@ -122,6 +122,7 @@ export default function PageAdmin() {
                 { key: "niveau", label: "Niveau", placeholder: "Ex : Master, Doctorat", required: false },
                 { key: "montant", label: "Montant", placeholder: "Ex : 1 200€/mois", required: false },
                 { key: "deadline", label: "Date limite (YYYY-MM-DD)", placeholder: "2026-03-31", required: false },
+                { key: "url_officiel", label: "URL officielle", placeholder: "https://...", required: false },
               ].map(({ key, label, placeholder, required }) => (
                 <div key={key}>
                   <label className="block text-xs font-semibold mb-1" style={{ color: "var(--ak-gris)" }}>
@@ -139,6 +140,25 @@ export default function PageAdmin() {
                 </div>
               ))}
             </div>
+            {/* Type d'opportunité */}
+            <div>
+              <label className="block text-xs font-semibold mb-1" style={{ color: "var(--ak-gris)" }}>
+                Type d&apos;opportunité
+              </label>
+              <select
+                value={form.type_opportunite}
+                onChange={(e) => setForm((f) => ({ ...f, type_opportunite: e.target.value }))}
+                className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
+                style={{ borderColor: "rgba(30,58,138,0.2)", color: "var(--ak-gris-fonce)" }}
+              >
+                <option value="">— Sélectionner —</option>
+                <option value="bourse">🎓 Bourse</option>
+                <option value="stage">💼 Stage</option>
+                <option value="formation">📚 Formation</option>
+                <option value="conférence">🎤 Conférence</option>
+              </select>
+            </div>
+
             <div>
               <label className="block text-xs font-semibold mb-1" style={{ color: "var(--ak-gris)" }}>
                 Description
@@ -202,7 +222,7 @@ export default function PageAdmin() {
               <table className="w-full text-sm">
                 <thead>
                   <tr style={{ background: "rgba(30,58,138,0.04)", borderBottom: "1px solid rgba(30,58,138,0.08)" }}>
-                    {["Titre", "Pays", "Niveau", "Montant", "Deadline", "Ajoutée le", ""].map((h) => (
+                    {["Titre", "Type", "Pays", "Montant", "Deadline", "URL", "Ajoutée le", ""].map((h) => (
                       <th key={h} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--ak-gris)" }}>
                         {h}
                       </th>
@@ -218,14 +238,21 @@ export default function PageAdmin() {
                         borderBottom: "1px solid rgba(30,58,138,0.06)",
                       }}
                     >
-                      <td className="px-4 py-3 font-medium max-w-[220px]" style={{ color: "var(--ak-gris-fonce)" }}>
+                      <td className="px-4 py-3 font-medium max-w-[180px]" style={{ color: "var(--ak-gris-fonce)" }}>
                         <span className="line-clamp-2">{b.titre}</span>
                       </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs capitalize" style={{ color: "var(--ak-gris)" }}>
+                        {(b as any).type_opportunite ?? "—"}
+                      </td>
                       <td className="px-4 py-3" style={{ color: "var(--ak-gris)" }}>{b.pays ?? "—"}</td>
-                      <td className="px-4 py-3" style={{ color: "var(--ak-gris)" }}>{b.niveau ?? "—"}</td>
                       <td className="px-4 py-3 whitespace-nowrap" style={{ color: "var(--ak-gris)" }}>{b.montant ?? "—"}</td>
                       <td className="px-4 py-3 whitespace-nowrap" style={{ color: "var(--ak-gris)" }}>
                         {b.deadline ? new Date(b.deadline).toLocaleDateString("fr-FR") : "—"}
+                      </td>
+                      <td className="px-4 py-3 max-w-[120px]" style={{ color: "var(--ak-gris)" }}>
+                        {(b as any).url_officiel
+                          ? <a href={(b as any).url_officiel} target="_blank" rel="noopener noreferrer" className="text-xs underline truncate block" style={{ color: "var(--ak-bleu)" }}>Voir →</a>
+                          : <span className="text-xs">—</span>}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-xs" style={{ color: "var(--ak-gris)" }}>
                         {new Date(b.created_at).toLocaleDateString("fr-FR")}

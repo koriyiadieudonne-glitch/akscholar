@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ erreur: "Non autorisé." }, { status: 401 });
 
   const body = await request.json();
-  const { titre, pays, niveau, montant, deadline, description } = body;
+  const { titre, pays, niveau, montant, deadline, description, url_officiel, type_opportunite } = body;
 
   if (!titre || !pays) {
     return NextResponse.json({ erreur: "Titre et pays sont obligatoires." }, { status: 400 });
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error } = await supabaseAdmin
     .from("bourses")
-    .insert({ titre, pays, niveau, montant, deadline, description })
+    .insert({ titre, pays, niveau, montant, deadline, description, url_officiel, type_opportunite })
     .select()
     .single();
 

@@ -48,14 +48,15 @@ export interface Bourse {
   domaines: string[];       // ["Informatique", "Médecine", ...]
   langueInstruction: string[];
   imageUrl?: string;
-  estVerifiee: boolean;     // Vérifiée manuellement par l'équipe
-  aGuideDisponible: boolean;// Badge "Guide Premium"
-  guideId?: string;         // Référence vers le Guide vendu
+  estVerifiee: boolean;          // Vérifiée manuellement par l'équipe
+  aGuideDisponible: boolean;     // Badge "Guide Premium"
+  guideId?: string;              // Référence vers le Guide vendu
   vues: number;
   favoris: number;
-  creeLe: string;           // Timestamp ISO
+  creeLe: string;                // Timestamp ISO
   misAJourLe: string;
-  sourceUrl?: string;       // URL d'où la bourse a été scrapée
+  sourceUrl?: string;            // URL d'où la bourse a été scrapée
+  typeOpportunite?: string;      // "bourse" | "stage" | "formation" | "conférence"
 }
 
 // ----------------------------------------------------------

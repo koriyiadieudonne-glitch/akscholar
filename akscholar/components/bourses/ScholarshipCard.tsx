@@ -48,6 +48,16 @@ function FormatDateLimite({ dateISO }: { dateISO: string }) {
   );
 }
 
+const EMOJI_TYPE: Record<string, string> = {
+  bourse: "🎓", stage: "💼", formation: "📚", "conférence": "🎤",
+};
+const STYLE_TYPE: Record<string, React.CSSProperties> = {
+  bourse:      { background: "rgba(30,58,138,0.08)", color: "var(--ak-bleu)" },
+  stage:       { background: "rgba(16,185,129,0.08)", color: "#059669" },
+  formation:   { background: "rgba(245,158,11,0.1)", color: "#B45309" },
+  "conférence":{ background: "rgba(139,92,246,0.08)", color: "#7C3AED" },
+};
+
 export default function ScholarshipCard({ bourse }: ScholarshipCardProps) {
   return (
     <article className="ak-carte flex flex-col h-full">
@@ -55,9 +65,15 @@ export default function ScholarshipCard({ bourse }: ScholarshipCardProps) {
       {/* En-tête : Pays + Badges */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="ak-badge-pays">
-            {bourse.paysNom}
-          </span>
+          <span className="ak-badge-pays">{bourse.paysNom}</span>
+          {bourse.typeOpportunite && (
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full capitalize"
+              style={STYLE_TYPE[bourse.typeOpportunite] ?? STYLE_TYPE.bourse}
+            >
+              {EMOJI_TYPE[bourse.typeOpportunite] ?? "🎓"} {bourse.typeOpportunite}
+            </span>
+          )}
           {bourse.estVerifiee && (
             <span className="ak-badge-verifie">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">

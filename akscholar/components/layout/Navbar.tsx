@@ -12,7 +12,7 @@ import { useAuth } from "@/lib/auth-context";
 
 // Liens de navigation principaux
 const LIENS_NAV = [
-  { href: "/bourses", label: "Bourses" },
+  { href: "/bourses", label: "Opportunités" },
   { href: "/universites", label: "Universités" },
   { href: "/tuteurs", label: "Tutor Match" },
   { href: "/guides", label: "Guides Premium" },
